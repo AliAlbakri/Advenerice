@@ -39,7 +39,7 @@ user_collection = db['Report']
 class Testing(Resource):
 
     def get(self):
-        # Note: the uidk is just a default value when searchBy identifier is not provided
+        # Note: the uik is just a default value when searchBy identifier is not provided
         # Note: some identifiers may be not unique...
         profile = user_collection.find_one({'name':'ali'})
 
