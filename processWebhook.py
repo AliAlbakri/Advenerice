@@ -1,23 +1,26 @@
 import flask
 import os
 from flask import send_from_directory
-
 from bson import json_util, ObjectId
 from flask_restful import Api, Resource, reqparse
 from pymongo import MongoClient
 import json
 
+
+# these are necessary decorations , do not tech them
 app = flask.Flask(__name__)
 
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/favicon.png')
-
 @app.route('/')
 @app.route('/home')
 def home():
     return "Hello World new API great one"
+
+
+# the fun starts here ....
 
 
 
@@ -29,6 +32,8 @@ db_password = 'adveneerice123'
 db_name = 'adveneericeDB'
 cluster = MongoClient(
     'mongodb+srv://adveneerice:adveneerice123@cluster0.blq7j.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+
+
 db = cluster['Hikaya']
 user_collection = db['Report']
 
@@ -39,8 +44,7 @@ user_collection = db['Report']
 class Testing(Resource):
 
     def get(self):
-        # Note: the uik is just a default value when searchBy identifier is not provided
-        # Note: some identifiers may be not unique...
+
         profile = user_collection.find_one({})
 
 
@@ -62,6 +66,4 @@ api.add_resource(Testing, '/get_random_story')
 
 
 if __name__ == "__main__":
-    app.secret_key = 'ItIsASecret'
-    app.debug = True
-    app.run()
+    app.run(debug=True)
