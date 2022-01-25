@@ -1,6 +1,9 @@
 import flask
 import os
 from flask import send_from_directory
+import pymongo
+from pymongo import MongoClient
+from flask_restful import Api, Resource, reqparse
 
 
 app = flask.Flask(__name__)
@@ -14,6 +17,40 @@ def favicon():
 @app.route('/home')
 def home():
     return "Hello World new API"
+
+
+
+api = Api(app)
+db_username = 'adveneerice'
+db_password = 'adveneerice123'
+db_name = 'adveneericeDB'
+cluster = MongoClient(
+    'mongodb+srv://adveneerice:adveneerice123@cluster0.blq7j.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+db = cluster['Hikaya']
+user_collection = db['Report']
+
+
+
+
+class Testing(Resource):
+
+    def get(self):
+        # Note: the uidk is just a default value when searchBy identifier is not provided
+        # Note: some identifiers may be not unique...
+        profile = user_collection.find_one({'name':'ali'})
+
+
+
+        return 'good'
+
+
+
+
+
+
+
+
+api.add_resource(Testing, '/get_random_story')
 
 
 
