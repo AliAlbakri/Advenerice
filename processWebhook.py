@@ -21,7 +21,7 @@ def favicon():
 @app.route('/')
 @app.route('/home')
 def home():
-    return "Hello World,awesome API is being built ..."
+    return "Hello World,awesome API"
 
 
 
