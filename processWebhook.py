@@ -49,7 +49,7 @@ class Testing(Resource):
 
 
 
-        return json.loads(json_util.dumps(profile))
+        return json.loads(json_util.dumps(profile))['name']
 
 
 
