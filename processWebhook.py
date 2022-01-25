@@ -1,5 +1,7 @@
 import flask
 import os
+from flask import send_from_directory
+
 
 app = flask.Flask(__name__)
 
@@ -26,6 +28,25 @@ db = cluster['Hikaya']
 user_collection = db['Report']
 
 
+class Testing(Resource):
+
+    def get(self):
+        # Note: the uidk is just a default value when searchBy identifier is not provided
+        # Note: some identifiers may be not unique...
+        profile = user_collection.find_one({'name':'ali'})
+
+
+
+        return json.loads(json_util.dumps(profile))
+
+
+
+
+
+
+
+
+api.add_resource(Testing, '/get_random_story')
 
 
 
