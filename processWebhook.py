@@ -1,12 +1,5 @@
 import flask
 import os
-import json
-from flask import send_from_directory
-import pymongo
-from bson import json_util, ObjectId
-from flask import Flask, request
-from flask_restful import Api, Resource, reqparse
-from pymongo import MongoClient
 
 app = flask.Flask(__name__)
 
@@ -33,25 +26,6 @@ db = cluster['Hikaya']
 user_collection = db['Report']
 
 
-class Testing(Resource):
-
-    def get(self):
-        # Note: the uidk is just a default value when searchBy identifier is not provided
-        # Note: some identifiers may be not unique...
-        profile = user_collection.find_one({'name':'ali'})
-
-
-
-        return json.loads(json_util.dumps(profile))
-
-
-
-
-
-
-
-
-api.add_resource(Testing, '/get_random_story')
 
 
 
