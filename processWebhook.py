@@ -1,10 +1,6 @@
 import flask
 import os
 from flask import send_from_directory
-import pymongo
-from pymongo import MongoClient
-from flask_restful import Api, Resource, reqparse
-
 
 app = flask.Flask(__name__)
 
