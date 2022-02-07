@@ -9,7 +9,7 @@ import datetime
 from hashlib import sha256
 
 
-# these are necessary decorations , do not tech them
+# these are necessary decorations , do not tech them please
 app = flask.Flask(__name__)
 
 @app.route('/favicon.ico')
