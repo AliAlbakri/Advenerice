@@ -38,7 +38,7 @@ cluster = MongoClient(
 
 db = cluster['adveneerice']
 user_collection = db['User']
-service_provider = db['Service_Provider']
+service_provider_collection = db['Service_Provider']
 
 
 
@@ -58,15 +58,12 @@ class CreateUser(Resource):
                 "message": 'The email is not unique,please choose another email',
                 "messageAr": "البريد الالكتروني موجود من قبل، رجاء حاول استخدام بريد الكتروني اخر"
             }
+
             return response, 400
 
 
         user_info_profile = {
-            # Commented feilds may be used later
-            # "uid": request.json['uid'], may be used for auth
-            # "username": request.json['username'],
-            "fname": request.json['name'],
-            "lname": request.json['name'],
+            "username": request.json['username'],
             "email": request.json['email'],
             'password' : SHA256(request.json['password']),
             "bio": '',
@@ -79,7 +76,6 @@ class CreateUser(Resource):
         }
 
         uid = user_collection.insert_one(user_info_profile).inserted_id
-        print(uid)
 
         return  {"user_id": f'{uid}'},201
 
@@ -87,17 +83,19 @@ class CreateUser(Resource):
 
 
 
-class Login(Resource):
+class LoginUser(Resource):
 
-    def put(self):
-        email =  request.json['email']
+    def post(self):
+        email = request.json['email']
 
 
-        user = getUserProfile(user_collection.find_one({'email':email}))
+        user = getJsonProfile(user_collection.find_one({'email':email}))
 
         if user and user['password'] == SHA256(request.json['password']):
             user_id = str(user["_id"]["$oid"])
-            return {"status": "granted","user_id":user_id},200
+            # profile = getUserProfile(user_collection.find_one({'email': email}))
+
+            return {"user_id": user_id}, 201
 
         else:
             return {"status":"email or password invalid, try again"},400
@@ -114,10 +112,10 @@ class Profile(Resource):
         value = request.args[search_by]
         profile = None
         if search_by == 'email':
-         profile = getUserProfile(user_collection.find_one({search_by:value}))
+         profile = getJsonProfile(user_collection.find_one({search_by:value}))
 
         if search_by == 'user_id' and ObjectId.is_valid(value) :
-            profile = getUserProfile(user_collection.find_one({"_id": ObjectId(value)}))
+            profile = getJsonProfile(user_collection.find_one({"_id": ObjectId(value)}))
 
         if profile:
             profile.pop('password',None)
@@ -133,9 +131,11 @@ class Profile(Resource):
 
 
 
-class CreateUserProvider(Resource):
+class SerivceProvider(Resource):
 
 
+
+    # put is creating a new service provider
     def put(self):
 
         # check if email is unique
@@ -147,7 +147,7 @@ class CreateUserProvider(Resource):
             return response, 400
 
 
-        user_info_profile = {
+        provider_info_profile = {
 
             "company_name": request.json['company_name'],
             "email": request.json['email'],
@@ -165,18 +165,38 @@ class CreateUserProvider(Resource):
             }]
         }
 
-        uid = user_collection.insert_one(user_info_profile).inserted_id
+        uid = service_provider_collection.insert_one(provider_info_profile).inserted_id
         print(uid)
 
         return  {"user_id": f'{uid}'},201
 
 
 
+class LoginProvider(Resource):
+
+    def post(self):
+        email = request.json['email']
+
+
+        provider = getJsonProfile(service_provider_collection.find_one({'email':email}))
+
+        if provider and provider['password'] == SHA256(request.json['password']):
+            provider_id = str(provider["_id"]["$oid"])
+
+            return {"provider_id": provider_id}, 201
+
+        else:
+            return {"status":"email or password invalid, try again"},400
 
 
 
-api.add_resource(CreateUser, '/create_user')
-api.add_resource(Login, '/login')
+
+
+api.add_resource(SerivceProvider,'/provider/signup')
+api.add_resource(LoginProvider,'/provider/signin')
+
+api.add_resource(CreateUser, '/signup')
+api.add_resource(LoginUser, '/signin')
 api.add_resource(Profile,'/get_user_profile')
 
 
@@ -189,16 +209,13 @@ def SHA256(password):
     return sha256(password.encode('utf-8')).hexdigest()
 
 def IsEmailUnique(email):
-    not_unique_email = None
-    not_unique_email = user_collection.find_one({'email': email})
 
-
-    if not_unique_email:
+    if  user_collection.find_one({'email': email}) or service_provider_collection.find_one({'email': email}):
         return False
     else:
         return True
 
-def getUserProfile(mongo_user):
+def getJsonProfile(mongo_user):
     return json.loads(json_util.dumps(mongo_user))
 
 
