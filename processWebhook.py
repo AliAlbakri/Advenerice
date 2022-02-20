@@ -55,8 +55,7 @@ class CreateUser(Resource):
         # check if email is unique
         if ( not IsEmailUnique(request.json['email'])):
             response = {
-                "message": 'The email is not unique,please choose another email',
-                "messageAr": "البريد الالكتروني موجود من قبل، رجاء حاول استخدام بريد الكتروني اخر"
+                "status": 'Error.The email is not unique,please choose another email'
             }
 
             return response, 400
@@ -141,8 +140,7 @@ class SerivceProvider(Resource):
         # check if email is unique
         if ( not IsEmailUnique(request.json['email'])):
             response = {
-                "message": 'The email is not unique,please choose another email',
-                "messageAr": "البريد الالكتروني موجود من قبل، رجاء حاول استخدام بريد الكتروني اخر"
+                "status": 'Error.The email is not unique,please choose another email'
             }
             return response, 400
 
