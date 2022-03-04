@@ -129,7 +129,7 @@ class Profile(Resource):
 
 
     def put(self):
-        profile = getJsonProfile(user_collection.find_one({"_id": ObjectId(request.json["id"])}))
+        profile = getJsonProfile(user_collection.find_one({"_id": ObjectId(request.json["user_id"])}))
         response = {}
         notUniqueEmail = None
         if request.json['email'] != profile['email'] :
