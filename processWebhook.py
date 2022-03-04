@@ -128,6 +128,32 @@ class Profile(Resource):
             return response, 400
 
 
+    def put(self):
+        profile = getJsonProfile(user_collection.find_one({"_id": ObjectId(request.json["id"])}))
+        response = {}
+        notUniqueEmail = None
+        if request.json['email'] != profile['email'] :
+            if  not IsEmailUnique(request.json['email']) :
+                notUniqueEmail = True
+                response = {'status':'email not updated, choose a unique email '}
+
+
+        updated_profile = { "username": request.json['username'], "bio": request.json['bio'],
+                           "sex": request.json['sex'], "profileImage":request.json['profileImage']}
+
+        if not notUniqueEmail:
+            updated_profile['email'] = request.json['email']
+            response = {'status':"profile updated"}
+
+
+
+
+        user_collection.update_one(
+            {'_id': ObjectId(request.json['user_id'])},
+            {'$set': updated_profile}
+        )
+        return response,200
+
 
 
 class SerivceProvider(Resource):
@@ -195,7 +221,7 @@ api.add_resource(LoginProvider,'/provider/signin')
 
 api.add_resource(CreateUser, '/signup')
 api.add_resource(LoginUser, '/signin')
-api.add_resource(Profile,'/get_user_profile')
+api.add_resource(Profile,'/get_user_profile','/edit_profile')
 
 
 
