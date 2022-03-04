@@ -92,9 +92,9 @@ class LoginUser(Resource):
 
         if user and user['password'] == SHA256(request.json['password']):
             user_id = str(user["_id"]["$oid"])
-            # profile = getUserProfile(user_collection.find_one({'email': email}))
+            profile = getJsonProfile(user_collection.find_one({'email': email}))
 
-            return {"user_id": user_id}, 201
+            return profile, 201
 
         else:
             return {"status":"email or password invalid, try again"},400
@@ -181,7 +181,7 @@ class LoginProvider(Resource):
         if provider and provider['password'] == SHA256(request.json['password']):
             provider_id = str(provider["_id"]["$oid"])
 
-            return {"provider_id": provider_id}, 201
+            return provider, 201
 
         else:
             return {"status":"email or password invalid, try again"},400
