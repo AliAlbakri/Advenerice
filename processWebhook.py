@@ -152,7 +152,10 @@ class Profile(Resource):
             {'_id': ObjectId(request.json['user_id'])},
             {'$set': updated_profile}
         )
-        return response,200
+        profile = getJsonProfile(user_collection.find_one({"_id": ObjectId(request.json["user_id"])}))
+        profile.pop('password', None)
+
+        return profile,200
 
 
 
