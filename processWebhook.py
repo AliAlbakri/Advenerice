@@ -185,11 +185,7 @@ class SerivceProvider(Resource):
             # "profileImage": request.json['profileImage'],
             # 'birthDate': request.json['birthDate'],
             "createdAt": str(datetime.datetime.utcnow()),
-            "provided_activities": [{
-                "name":"",
-                "description":"",
-                "image":""
-            }]
+            "provided_activities": []
         }
 
         uid = service_provider_collection.insert_one(provider_info_profile).inserted_id
@@ -216,6 +212,76 @@ class LoginProvider(Resource):
             return {"status":"email or password invalid, try again"},400
 
 
+
+
+
+class Activity(Resource):
+
+    # Note: ratings needs to be calculated as an average. comments need to be updated
+
+    def get(self):
+        activities = getJsonProfile(service_provider_collection.find_one({"_id": ObjectId(request.json["activity_provider_id"])}))["provided_activities"]
+
+        return activities,200
+
+
+
+
+    def put(self):
+        activity = {
+            "title":request.json['title'],
+            "description":request.json['description'],
+            "picture":request.json['picture'],
+            "city":request.json['city'],
+            "date":request.json['date'],
+            "category":request.json['category'],
+            "price":request.json['price'],
+            "comments":[],
+            "rating":""
+        }
+
+        service_provider_collection.update_one(
+            {"_id":ObjectId(request.json['activity_provider_id'])},
+            {"$push":{"provided_activities":activity}}
+        )
+
+        activities = getJsonProfile(service_provider_collection.find_one({"_id": ObjectId(request.json["activity_provider_id"])}))["provided_activities"]
+
+
+        return activities, 200
+
+
+class Activities(Resource):
+#
+    def get(self):
+        activities = getJsonProfile(service_provider_collection.find({},{"provided_activities":1,"_id":0}))
+
+        seperated_activities = []
+        for act in activities :
+            seperated_activities.append(act["provided_activities"])
+
+
+
+        concatenated_activities = []
+        for act in seperated_activities:
+            concatenated_activities = concatenated_activities+act
+
+
+
+
+
+
+
+
+        return concatenated_activities,200
+
+
+
+
+
+api.add_resource(Activities,'/get/activities')
+
+api.add_resource(Activity,'/Activity/add','/get/provider/activities')
 
 
 
@@ -252,5 +318,9 @@ def getJsonProfile(mongo_user):
 
 
 
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+#https://backend-advenerice.herokuapp.com/
