@@ -39,6 +39,10 @@ cluster = MongoClient(
 db = cluster['adveneerice']
 user_collection = db['User']
 service_provider_collection = db['Service_Provider']
+activity_collection = db['Activity']
+comment_collection = db['Comment']
+
+
 
 
 
@@ -220,15 +224,17 @@ class Activity(Resource):
     # Note: ratings needs to be calculated as an average. comments need to be updated
 
     def get(self):
-        activities = getJsonProfile(service_provider_collection.find_one({"_id": ObjectId(request.json["activity_provider_id"])}))["provided_activities"]
-
-        return activities,200
+        activity = getJsonProfile(activity_collection.find_one({"_id":ObjectId(request.json["activity_id"])}))
 
 
+        return activity,200
 
 
-    def put(self):
+
+
+    def post(self):
         activity = {
+            "activity_provider_id":request.json["activity_provider_id"],
             "title":request.json['title'],
             "description":request.json['description'],
             "picture":request.json['picture'],
@@ -236,52 +242,91 @@ class Activity(Resource):
             "date":request.json['date'],
             "category":request.json['category'],
             "price":request.json['price'],
-            "comments":[],
+            "comments_Ids":[],
             "rating":""
         }
 
-        service_provider_collection.update_one(
-            {"_id":ObjectId(request.json['activity_provider_id'])},
-            {"$push":{"provided_activities":activity}}
-        )
 
-        activities = getJsonProfile(service_provider_collection.find_one({"_id": ObjectId(request.json["activity_provider_id"])}))["provided_activities"]
+        activity_collection.insert_one(activity).inserted_id
+
+
+
+        #
+        activities = getJsonProfile(activity_collection.find({"activity_provider_id":request.json["activity_provider_id"]}))
+
+        activities = list(activities)
 
 
         return activities, 200
+
+    def delete(self):
+
+        activity_collection.delete_one({"_id":ObjectId(request.json['activity_id'])})
+
+        return 200
+
+
+class ActivityByProvider(Resource):
+    def get(self):
+        activities = getJsonProfile(activity_collection.find({"activity_provider_id": request.json["activity_provider_id"]}))
+        activities = list(activities)
+
+
+        return activities,200
 
 
 class Activities(Resource):
 #
     def get(self):
-        activities = getJsonProfile(service_provider_collection.find({},{"provided_activities":1,"_id":0}))
-
-        seperated_activities = []
-        for act in activities :
-            seperated_activities.append(act["provided_activities"])
-
-
-
-        concatenated_activities = []
-        for act in seperated_activities:
-            concatenated_activities = concatenated_activities+act
+        activities = getJsonProfile(activity_collection.find({}))
+        activities = list(activities)
 
 
 
 
+        return activities,200
+
+
+
+class Comment(Resource):
+
+    #Note: get all comments for an activity
+    def get(self):
+        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json["activity_id"]}))
+        comments = list[cursorComments]
+
+        return comments,200
+
+
+    def post(self):
+        comment = {
+            'commenter_id': request.json['commenter_id'],
+            'activity_id': request.json['activity_id'],
+            'comment': request.json['comment'],
+            'rating' : request.json['rating']
+        }
+        comment_id = comment_collection.insert_one(comment).inserted_id
+
+
+
+        return {"comment_id":str(comment_id)}, 201
+
+
+    def delete(self):
+        comment_collection.delete_one({"_id":ObjectId(request.json["comment_id"])})
+        return 200
 
 
 
 
-        return concatenated_activities,200
-
+api.add_resource(Comment,'/get/comments','/post/comment','/delete/comment')
+api.add_resource(ActivityByProvider,'/get/provider/activities')
 
 
 
 
 api.add_resource(Activities,'/get/activities')
-
-api.add_resource(Activity,'/Activity/add','/get/provider/activities')
+api.add_resource(Activity,'/Activity/add','/get/activity','/delete/activity')
 
 
 
@@ -310,6 +355,9 @@ def IsEmailUnique(email):
 
 def getJsonProfile(mongo_user):
     return json.loads(json_util.dumps(mongo_user))
+
+
+
 
 
 
