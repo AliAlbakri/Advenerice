@@ -267,7 +267,8 @@ class Activity(Resource):
 
 
 class ActivityByProvider(Resource):
-    def get(self):
+    #cange
+    def post(self):
         activities = getJsonProfile(activity_collection.find({"activity_provider_id": request.json["activity_provider_id"]}))
         activities = list(activities)
 
