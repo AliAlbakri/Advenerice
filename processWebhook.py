@@ -293,10 +293,9 @@ class Comment(Resource):
 
     #Note: get all comments for an activity ...
     def put(self):
-        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json["activity_id"]}))
-        comments = list[cursorComments]
+        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json['activity_id']}))
 
-        return comments,200
+        return cursorComments,200
 
 
     def post(self):
