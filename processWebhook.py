@@ -287,20 +287,16 @@ class Activities(Resource):
 
         return activities,200
 
-    def post(self):
-        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json['activity_id']}))
-
-        return cursorComments,200
-
 
 
 class Comment(Resource):
 
     #Note: get all comments for an activity ...
-    # def put(self):
-    #     cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json['activity_id']}))
-    #
-    #     return cursorComments,200
+    def put(self):
+        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json['activity_id']}))
+
+
+        return cursorComments,200
 
 
     def post(self):
@@ -324,13 +320,13 @@ class Comment(Resource):
 
 
 
-api.add_resource(Comment,'/post/comment','/delete/comment')
+api.add_resource(Comment,'/get/comments','/post/comment','/delete/comment')
 api.add_resource(ActivityByProvider,'/get/provider/activities')
 
 
 
 
-api.add_resource(Activities,'/get/activities','/get/comments')
+api.add_resource(Activities,'/get/activities')
 api.add_resource(Activity,'/Activity/add','/get/activity','/delete/activity')
 
 
