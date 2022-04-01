@@ -267,9 +267,9 @@ class Activity(Resource):
 
 
 class ActivityByProvider(Resource):
-    #cange
-    def post(self):
-        activities = getJsonProfile(activity_collection.find({"activity_provider_id": request.json["activity_provider_id"]}))
+
+    def get(self):
+        activities = getJsonProfile(activity_collection.find({"activity_provider_id": request.args.get('activity_provider_id')}))
         activities = list(activities)
 
 
@@ -292,8 +292,8 @@ class Activities(Resource):
 class Comment(Resource):
 
     #Note: get all comments for an activity ...
-    def put(self):
-        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.json['activity_id']}))
+    def get(self):
+        cursorComments = getJsonProfile(comment_collection.find({"activity_id":request.args.get('activity_id')}))
 
 
         return cursorComments,200
