@@ -325,16 +325,27 @@ class JoinActivity(Resource):
 
     def post(self):
         participant_id = request.json['participant_id']
+        activity_details = {
+            "activity_id": request.json['activity_id'],
+            "total_price": request.json['total_price'],
+            "qty": request.json['qty']
+        }
+
         activity_collection.update_one(
             {"_id":ObjectId(request.json['activity_id'])},
             {"$addToSet":{'registered_participants':participant_id}}
         )
 
-        activity_details = {
-            "activity_id":request.json['activity_id'],
-            "total_price":request.json['total_price'],
-             "qty":request.json['qty']
-        }
+        # get the provider id to add the price of this ticket to total sales
+        provider_id_obj = activity_collection.find_one({"_id":ObjectId( request.json['activity_id'])},
+                                     {'activity_provider_id':1})
+
+        service_provider_collection.update_one(
+            {"_id":ObjectId(provider_id_obj['activity_provider_id'])},
+            {"$push":{"total_sales":request.json['total_price']}}
+        )
+
+
 
         user_collection.update_one(
             {"_id":ObjectId(participant_id)},
@@ -351,10 +362,30 @@ class JoinActivity(Resource):
         return current_joined_activity,200
 
 
+class ProviderSales(Resource):
+
+    def get(self):
+        sales = 0
+        total_purshases = 0
+        provider_obj = service_provider_collection.find_one({"_id":ObjectId(request.args.get('provider_id'))},{'total_sales':1})
+        if 'total_sales' in  provider_obj:
+            for sale in provider_obj['total_sales']:
+                sales += sale
+            total_purshases = len(provider_obj['total_sales'])
+
+        return {'sales':sales,'orders':total_purshases},200
+
+
+
+
+
 
 
 
 api.add_resource(JoinActivity,'/join_activity')
+api.add_resource(ProviderSales,'/get/total_sales')
+
+
 api.add_resource(Comment,'/get/comments','/post/comment','/delete/comment')
 api.add_resource(ActivityByProvider,'/get/provider/activities')
 
