@@ -320,6 +320,41 @@ class Comment(Resource):
 
 
 
+
+class JoinActivity(Resource):
+
+    def post(self):
+        participant_id = request.json['participant_id']
+        activity_collection.update_one(
+            {"_id":ObjectId(request.json['activity_id'])},
+            {"$addToSet":{'registered_participants':participant_id}}
+        )
+
+        activity_details = {
+            "activity_id":request.json['activity_id'],
+            "total_price":request.json['total_price'],
+             "qty":request.json['qty']
+        }
+
+        user_collection.update_one(
+            {"_id":ObjectId(participant_id)},
+            {"$addToSet": {'registered_activities': activity_details}}
+        )
+
+
+        current_joined_activity = activity_collection.find({'registered_participants':participant_id})
+        current_joined_activity = list(current_joined_activity)
+        current_joined_activity = getJsonProfile(current_joined_activity)
+
+
+
+        return current_joined_activity,200
+
+
+
+
+
+api.add_resource(JoinActivity,'/join_activity')
 api.add_resource(Comment,'/get/comments','/post/comment','/delete/comment')
 api.add_resource(ActivityByProvider,'/get/provider/activities')
 
