@@ -392,7 +392,7 @@ class ProviderSales(Resource):
 
 
 
-api.add_resource(JoinActivity,'/join_activity','get/join_activity')
+api.add_resource(JoinActivity,'/join_activity','/get/join_activity')
 api.add_resource(ProviderSales,'/get/total_sales')
 
 
