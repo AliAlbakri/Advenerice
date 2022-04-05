@@ -224,7 +224,7 @@ class Activity(Resource):
     # Note: ratings needs to be calculated as an average. comments need to be updated
 
     def get(self):
-        activity = getJsonProfile(activity_collection.find_one({"_id":ObjectId(request.json["activity_id"])}))
+        activity = getJsonProfile(activity_collection.find_one({"_id":ObjectId(request.args.get('activity_id'))}))
 
 
         return activity,200
