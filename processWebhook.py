@@ -323,6 +323,13 @@ class Comment(Resource):
 
 class JoinActivity(Resource):
 
+    def get(self):
+        current_joined_activity = activity_collection.find({'registered_participants': request.args.get('participant_id')})
+        current_joined_activity = list(current_joined_activity)
+        current_joined_activity = getJsonProfile(current_joined_activity)
+
+        return current_joined_activity,200
+
     def post(self):
         participant_id = request.json['participant_id']
         activity_details = {
@@ -362,6 +369,10 @@ class JoinActivity(Resource):
         return current_joined_activity,200
 
 
+
+
+
+
 class ProviderSales(Resource):
 
     def get(self):
@@ -381,8 +392,7 @@ class ProviderSales(Resource):
 
 
 
-
-api.add_resource(JoinActivity,'/join_activity')
+api.add_resource(JoinActivity,'/join_activity','get/join_activity')
 api.add_resource(ProviderSales,'/get/total_sales')
 
 
