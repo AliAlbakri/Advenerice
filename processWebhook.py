@@ -39,6 +39,7 @@ user_collection = db['User']
 service_provider_collection = db['Service_Provider']
 activity_collection = db['Activity']
 comment_collection = db['Comment']
+notification_collection = db['Notification']
 
 
 class CreateUser(Resource):
@@ -144,7 +145,7 @@ class Profile(Resource):
 class SerivceProvider(Resource):
 
     # put is creating a new service provider
-    def put(self):
+    def post(self):
         # check if email is unique
         if (not IsEmailUnique(request.json['email'])):
             response = {
@@ -160,7 +161,7 @@ class SerivceProvider(Resource):
             "bio": '',
             "sex": 'undetermined',
             'isActive': True,
-            # "profileImage": request.json['profileImage'],
+            "logo":"",
             # 'birthDate': request.json['birthDate'],
             "createdAt": str(datetime.datetime.utcnow()),
             "provided_activities": []
@@ -170,6 +171,25 @@ class SerivceProvider(Resource):
         print(uid)
 
         return {"user_id": f'{uid}'}, 201
+
+
+# this post is updating objects
+    def put(self):
+
+        updated_provider = {
+            'company_name': request.json['company_name'],
+            'logo': request.json['logo'],
+            'email': request.json['email'],
+            'monthly_target_sales': request.json['monthly_target_sales'],
+
+        }
+
+        service_provider_collection.update_one(
+            {"_id":ObjectId(request.json['provider_id'])},
+            {"$set":updated_provider}
+        )
+
+        return 200
 
 
 class LoginProvider(Resource):
@@ -345,6 +365,50 @@ class ProviderSales(Resource):
 
 
 
+class Notification(Resource):
+
+    def post(self):
+
+        noti_obj = {
+            "provider_id": request.json['provider_id'],
+            "title": request.json['title'],
+            "body": request.json['body'],
+            "created_at": str(datetime.datetime.utcnow())
+        }
+
+        id = notification_collection.insert_one(noti_obj).inserted_id
+
+        return str(id),200
+
+
+    def get(self):
+        notifications = notification_collection.find({})
+
+        notidications_arr = []
+        if notifications:
+            for notification in notifications:
+               logo_cname = service_provider_collection.find_one(
+                    {'_id':ObjectId(notification['provider_id'])}
+                )
+
+               customed_notification = {
+                   "logo": logo_cname['logo'],
+                   "title":notification['title'],
+                   "body": notification['body'],
+                   "created_at":notification['created_at']
+               }
+               notidications_arr.append(customed_notification)
+
+
+
+        return notidications_arr,200
+
+
+
+
+
+
+api.add_resource(Notification, '/send_notification', '/get/notification')
 
 
 api.add_resource(JoinActivity, '/join_activity', '/get/join_activity')
@@ -356,7 +420,7 @@ api.add_resource(ActivityByProvider, '/get/provider/activities')
 api.add_resource(Activities, '/get/activities')
 api.add_resource(Activity, '/Activity/add', '/get/activity', '/delete/activity')
 
-api.add_resource(SerivceProvider, '/provider/signup')
+api.add_resource(SerivceProvider, '/provider/signup','/edit/provider_account')
 api.add_resource(LoginProvider, '/provider/signin')
 
 api.add_resource(CreateUser, '/signup')
