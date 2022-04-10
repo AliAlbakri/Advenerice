@@ -444,8 +444,9 @@ class Category(Resource):
 
 
 
-class ActivateProviders(Resource):
+class UnActiveProviders(Resource):
 
+    # getting not active provs
     def get(self):
 
         pointers = service_provider_collection.find({'isActive':False})
@@ -453,10 +454,29 @@ class ActivateProviders(Resource):
         for not_active_provider in pointers:
             not_active_providers_arr.append(getJsonProfile(not_active_provider))
 
+        return not_active_providers_arr,200
 
 
 
 
+# class ActiveProviders(Resource):
+#
+#     # activiate provider
+#     def post(self):
+#
+#         provider_id = request.json['']
+#
+#         return not_active_providers_arr,200
+
+
+
+
+
+
+
+
+
+api.add_resource(UnActiveProviders, '/get_unactive_providers')
 
 api.add_resource(Category, '/admin/add_category', '/admin/delete_category','/admin/get_categories')
 
