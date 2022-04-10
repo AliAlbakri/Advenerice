@@ -205,7 +205,7 @@ class LoginProvider(Resource):
             if  provider['isActive']:
                 return provider, 201
             else:
-                return {"status":"admin will verify your account shortly"},400
+                return {"status":"admin will verify your account soon"},400
 
         else:
             return {"status": "email or password invalid, try again"}, 400
