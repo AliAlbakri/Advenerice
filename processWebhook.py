@@ -40,6 +40,8 @@ service_provider_collection = db['Service_Provider']
 activity_collection = db['Activity']
 comment_collection = db['Comment']
 notification_collection = db['Notification']
+category_collection = db['category']
+
 
 
 class CreateUser(Resource):
@@ -406,6 +408,45 @@ class Notification(Resource):
 
 
 
+class Category(Resource):
+
+
+    def get(self):
+        categories_pointer = category_collection.find({})
+        categories_arr = []
+        for category in categories_pointer :
+            categories_arr.append(getJsonProfile(category))
+
+
+
+        return categories_arr,200
+
+    def post(self):
+
+        category_obj = {
+            "name": request.json['category_name']
+        }
+
+        category_collection.insert_one(category_obj)
+
+        return {"msg":"category added"},200
+
+
+
+
+    def delete(self):
+
+        category_collection.delete_one({"_id":ObjectId(request.json['category_id'])})
+
+        return {'msg':'category deleted'}
+
+
+
+
+
+
+
+api.add_resource(Category, '/add_category', '/delete_category','/get_categories')
 
 
 api.add_resource(Notification, '/send_notification', '/get/notification')
@@ -457,6 +498,7 @@ def getActivityRating(activity_id):
         average_ratings = total_ratings / len(comments)
 
         return float("{:.1f}".format(average_ratings))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
