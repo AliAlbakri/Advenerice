@@ -162,7 +162,7 @@ class SerivceProvider(Resource):
             'password': SHA256(request.json['password']),
             "bio": '',
             "sex": 'undetermined',
-            'isActive': True,
+            'isActive': False,
             "logo":"",
             # 'birthDate': request.json['birthDate'],
             "createdAt": str(datetime.datetime.utcnow()),
@@ -202,9 +202,10 @@ class LoginProvider(Resource):
         provider = getJsonProfile(service_provider_collection.find_one({'email': email}))
 
         if provider and provider['password'] == SHA256(request.json['password']):
-            provider_id = str(provider["_id"]["$oid"])
-
-            return provider, 201
+            if  provider['isActive']:
+                return provider, 201
+            else:
+                return {"msg":"admin will verify your account shortly"},400
 
         else:
             return {"status": "email or password invalid, try again"}, 400
@@ -443,10 +444,21 @@ class Category(Resource):
 
 
 
+class ActivateProviders(Resource):
+
+    def get(self):
+
+        pointers = service_provider_collection.find({'isActive':False})
+        not_active_providers_arr = []
+        for not_active_provider in pointers:
+            not_active_providers_arr.append(getJsonProfile(not_active_provider))
 
 
 
-api.add_resource(Category, '/add_category', '/delete_category','/get_categories')
+
+
+
+api.add_resource(Category, '/admin/add_category', '/admin/delete_category','/admin/get_categories')
 
 
 api.add_resource(Notification, '/send_notification', '/get/notification')
