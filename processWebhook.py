@@ -205,7 +205,7 @@ class LoginProvider(Resource):
             if  provider['isActive']:
                 return provider, 201
             else:
-                return {"msg":"admin will verify your account shortly"},400
+                return {"status":"admin will verify your account shortly"},400
 
         else:
             return {"status": "email or password invalid, try again"}, 400
@@ -459,14 +459,19 @@ class UnActiveProviders(Resource):
 
 
 
-# class ActiveProviders(Resource):
-#
-#     # activiate provider
-#     def post(self):
-#
-#         provider_id = request.json['']
-#
-#         return not_active_providers_arr,200
+class ActiveProviders(Resource):
+
+    # activiate provider
+    def post(self):
+
+        provider_id = request.json['provider_id']
+
+        service_provider_collection.update_one(
+            {'_id':ObjectId(provider_id)},
+            {"$set":{"isActive":True}}
+        )
+
+        return {"msg":'Activated successfully'},200
 
 
 
@@ -475,6 +480,7 @@ class UnActiveProviders(Resource):
 
 
 
+api.add_resource(ActiveProviders, '/activate_provider')
 
 api.add_resource(UnActiveProviders, '/get_unactive_providers')
 
