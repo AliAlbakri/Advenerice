@@ -175,20 +175,24 @@ class SerivceProvider(Resource):
         return {"user_id": f'{uid}'}, 201
 
 
-# this post is updating objects
+
     def put(self):
+        update_body = request.get_json()
+        provider_id = str(request.json['activity_provider_id'])
+        del request.json['activity_provider_id']
 
-        updated_provider = {
-            'company_name': request.json['company_name'],
-            'logo': request.json['logo'],
-            'email': request.json['email'],
-            'monthly_target_sales': request.json['monthly_target_sales'],
 
-        }
+        # updated_provider = {
+        #     'company_name': request.json['company_name'],
+        #     'logo': request.json['logo'],
+        #     'email': request.json['email'],
+        #     'monthly_target_sales': request.json['monthly_target_sales'],
+        #
+        # }
 
         service_provider_collection.update_one(
-            {"_id":ObjectId(request.json['provider_id'])},
-            {"$set":updated_provider}
+            {"_id":ObjectId(provider_id)},
+            {"$set":update_body}
         )
 
         return 200
@@ -248,6 +252,19 @@ class Activity(Resource):
         activity_collection.delete_one({"_id": ObjectId(request.json['activity_id'])})
 
         return 200
+
+
+    def put(self):
+        activity_update =  request.get_json()
+        activity_id = str(request.json['activity_id'])
+        del activity_update['activity_id']
+        activity_collection.update_one(
+            {'_id':ObjectId(activity_id)},
+            {'$set':activity_update}
+        )
+
+        return 200
+
 
 
 
@@ -497,7 +514,7 @@ api.add_resource(Comment, '/get/comments', '/post/comment', '/delete/comment')
 api.add_resource(ActivityByProvider, '/get/provider/activities')
 
 api.add_resource(Activities, '/get/activities')
-api.add_resource(Activity, '/Activity/add', '/get/activity', '/delete/activity')
+api.add_resource(Activity, '/Activity/add', '/get/activity', '/delete/activity','/edit/activity')
 
 api.add_resource(SerivceProvider, '/provider/signup','/edit/provider_account')
 api.add_resource(LoginProvider, '/provider/signin')
