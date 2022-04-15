@@ -193,8 +193,7 @@ class SerivceProvider(Resource):
 
         if 'email' in update_body:
             if service_provider_collection.find_one({'email': update_body['email']}):
-                res = {'status':'you are using same email or the email is already taken,other info are updated'}
-            print(service_provider_collection.find_one({'email': update_body['email']}))
+                del update_body['email']
 
         service_provider_collection.update_one(
             {"_id":ObjectId(provider_id)},
