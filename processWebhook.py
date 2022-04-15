@@ -180,6 +180,7 @@ class SerivceProvider(Resource):
         update_body = request.get_json()
         provider_id = str(request.json['activity_provider_id'])
         del request.json['activity_provider_id']
+        res = {'status': 'updated'}
 
 
         # updated_provider = {
@@ -190,18 +191,17 @@ class SerivceProvider(Resource):
         #
         # }
 
-        if update_body['email']:
-            if service_provider_collection.find({'email': update_body['email']}):
+        if 'email' in update_body:
+            if service_provider_collection.find_one({'email': update_body['email']}):
                 res = {'status':'you are using same email or the email is already taken,other info are updated'}
-            else:
-                res = {'status':'updated'}
+            print(service_provider_collection.find_one({'email': update_body['email']}))
 
         service_provider_collection.update_one(
             {"_id":ObjectId(provider_id)},
             {"$set":update_body}
         )
 
-        return 200,res
+        return res,200
 
 
 class LoginProvider(Resource):
