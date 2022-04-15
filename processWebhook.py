@@ -190,12 +190,18 @@ class SerivceProvider(Resource):
         #
         # }
 
+        if update_body['email']:
+            if service_provider_collection.find({'email': update_body['email']}):
+                res = {'status':'you are using same email or the email is already taken,other info are updated'}
+            else:
+                res = {'status':'updated'}
+
         service_provider_collection.update_one(
             {"_id":ObjectId(provider_id)},
             {"$set":update_body}
         )
 
-        return 200
+        return 200,res
 
 
 class LoginProvider(Resource):
