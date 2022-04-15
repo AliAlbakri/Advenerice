@@ -490,11 +490,98 @@ class ActiveProviders(Resource):
 
         return {"msg":'Activated successfully'},200
 
+class ForgotPassword(Resource):
+
+    def post(self):
+
+
+        if not ( user_collection.find_one({'email':request.json['email']})
+                 or service_provider_collection.find_one({'email':request.json['email']}) ) :
+            return {'status':'no such email'}
+
+        encrypted_pass = SHA256(request.json['new-password'])
+        if request.json['type'] == 'activity_provider':
+            print('here')
+            service_provider_collection.update_one(
+                {'email':request.json['email']},
+                {"$set":{'password':encrypted_pass}}
+            )
+        else:
+            user_collection.update_one(
+                {'email': request.json['email']},
+                {"$set": {'password': encrypted_pass}}
+            )
+
+
+
+        return 200
+
+
+
+
+class filterA(Resource):
+    # ,
+    # {"category": request.args.get('category')},
+    # {"date": request.args.get('date')}
+        def get(self):
+            global filtered_activity
+            if request.args.get('date') and request.args.get('city') and request.args.get('category') :
+
+                filtered_activity = activity_collection.find({"$and": [
+                   {"city": request.args.get('city')},
+                    {"category": request.args.get('category')},
+                    {"date": request.args.get('date')}
+                ]})
+
+
+            elif request.args.get('city') and request.args.get('category') :
+                filtered_activity = activity_collection.find({"$and": [
+                    {"city": request.args.get('city')},
+                    {"category": request.args.get('category')}
+                ]})
+
+            elif request.args.get('city') and request.args.get('date') :
+                filtered_activity = activity_collection.find({"$and": [
+                    {"city": request.args.get('city')},
+                    {"date": request.args.get('date')}
+                ]})
+
+            elif request.args.get('category') and request.args.get('date') :
+                filtered_activity = activity_collection.find({"$and": [
+                    {"category": request.args.get('category')},
+                    {"date": request.args.get('date')}
+                ]})
+
+            else:
+                if request.args.get('category'):
+                    filtered_activity = activity_collection.find({'category':request.args.get('category')})
+                elif request.args.get('date'):
+                    filtered_activity = activity_collection.find({'date':request.args.get('date')})
+                elif request.args.get('city'):
+                    filtered_activity = activity_collection.find({'city':request.args.get('city')})
+                else:
+                    filtered_activity = activity_collection.find({})
 
 
 
 
 
+
+
+            filtered_activity = getJsonProfile(list(filtered_activity))
+
+            return filtered_activity,200
+
+
+
+
+
+
+
+
+api.add_resource(filterA, '/filter_activity')
+
+api.add_resource(ForgotPassword, '/forgot_password')
 
 
 api.add_resource(ActiveProviders, '/activate_provider')
