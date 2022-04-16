@@ -66,8 +66,6 @@ class CreateUser(Resource):
             "bio": '',
             "sex": 'undetermined',
             'isActive': True,
-            # "profileImage": request.json['profileImage'],
-            # 'birthDate': request.json['birthDate'],
             "createdAt": str(datetime.datetime.utcnow()),
             "regestred_activities": None
         }
@@ -156,13 +154,13 @@ class SerivceProvider(Resource):
             return response, 400
 
         provider_info_profile = {
-
+            ################# change is active here to false later on
             "company_name": request.json['company_name'],
             "email": request.json['email'],
             'password': SHA256(request.json['password']),
             "bio": '',
             "sex": 'undetermined',
-            'isActive': False,
+            'isActive': True,
             "logo":"",
             # 'birthDate': request.json['birthDate'],
             "createdAt": str(datetime.datetime.utcnow()),
