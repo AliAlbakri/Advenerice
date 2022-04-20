@@ -524,7 +524,7 @@ class ForgotPassword(Resource):
 
 class filterA(Resource):
     # ,
-    # {"category": request.args.get('category')},
+    # {"category": request.args.get('category')},   jejej
     # {"date": request.args.get('date')}
         def get(self):
             global filtered_activity
