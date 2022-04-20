@@ -176,7 +176,7 @@ class SerivceProvider(Resource):
 
     def put(self):
         update_body = request.get_json()
-        provider_id = str(request.json['activity_provider_id'])
+        provider_id = request.json['activity_provider_id']
         del request.json['activity_provider_id']
         res = {'status': 'updated'}
 
@@ -192,7 +192,6 @@ class SerivceProvider(Resource):
             {"$set":update_body}
         )
 
-        # a = getJsonProfile(service_provider_collection.find_one({'_id':ObjectId(update_body['activity_provider_id'])}))
 
         return res,200
 
