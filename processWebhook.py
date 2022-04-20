@@ -162,7 +162,7 @@ class SerivceProvider(Resource):
             "sex": 'undetermined',
             'isActive': True,
             "logo":"",
-            # 'birthDate': request.json['birthDate'],
+            "monthly_target_sales":0,
             "createdAt": str(datetime.datetime.utcnow()),
             "provided_activities": []
         }
@@ -307,7 +307,7 @@ class Comment(Resource):
             'comment': request.json['comment'],
             'rating': request.json['rating'],
             "commenter_name": commenter_obj['username'],
-            'created_at': str(datetime.datetime.now().strftime("%x"))
+            'created_at': str(datetime.datetime.utcnow())
         }
         comment_id = comment_collection.insert_one(comment).inserted_id
 
