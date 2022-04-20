@@ -176,7 +176,7 @@ class SerivceProvider(Resource):
 
     def put(self):
         update_body = request.get_json()
-        provider_id = request.json['activity_provider_id']
+        provider_id = str(request.json['activity_provider_id'])
         del request.json['activity_provider_id']
         res = {'status': 'updated'}
 
