@@ -192,9 +192,9 @@ class SerivceProvider(Resource):
             {"$set":update_body}
         )
 
-        a = getJsonProfile(service_provider_collection.find_one({'_id':ObjectId(update_body['activity_provider_id'])}))
+        # a = getJsonProfile(service_provider_collection.find_one({'_id':ObjectId(update_body['activity_provider_id'])}))
 
-        return a,200
+        return res,200
 
 
 class LoginProvider(Resource):
