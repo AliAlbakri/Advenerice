@@ -193,7 +193,10 @@ class SerivceProvider(Resource):
         )
 
 
-        return res,200
+        profile = getJsonProfile(service_provider_collection.find_one({'_id':ObjectId(provider_id)}))
+
+
+        return profile,200
 
 
 class LoginProvider(Resource):
