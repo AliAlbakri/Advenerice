@@ -236,7 +236,7 @@ class Activity(Resource):
             "category": request.json['category'],
             "price": request.json['price'],
             "comments_Ids": [],
-            "rating": ""
+            "rating": 0
         }
 
         activity_collection.insert_one(activity).inserted_id
@@ -577,7 +577,7 @@ class topRatedActivity(Resource):
     def get(self):
 
 
-        highest_rated =  activity_collection.find().sort({"rating": +1}).limit(1)
+        print(activity_collection.find({}).sort({"rating": +1}).limit(1))
 
         return getActivityRating(highest_rated),200
 
