@@ -579,7 +579,7 @@ class topRatedActivity(Resource):
 
         print(activity_collection.find({}).sort({"rating": +1}).limit(1))
 
-        return getActivityRating(highest_rated),200
+        return 200
 
 
 
