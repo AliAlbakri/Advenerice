@@ -377,6 +377,8 @@ class ProviderSales(Resource):
         total_purshases = 0
         provider_obj = service_provider_collection.find_one({"_id": ObjectId(request.args.get('provider_id'))},
                                                             {'total_sales': 1})
+
+        print(provider_obj)
         if 'total_sales' in provider_obj:
             for sale in provider_obj['total_sales']:
                 sales += sale
