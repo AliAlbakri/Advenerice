@@ -180,14 +180,8 @@ class SerivceProvider(Resource):
         del request.json['activity_provider_id']
         res = {'status': 'updated'}
 
+        print(update_body)
 
-        # updated_provider = {
-        #     'company_name': request.json['company_name'],
-        #     'logo': request.json['logo'],
-        #     'email': request.json['email'],
-        #     'monthly_target_sales': request.json['monthly_target_sales'],
-        #
-        # }
 
         if 'email' in update_body:
             if service_provider_collection.find_one({'email': update_body['email']}):
@@ -198,7 +192,9 @@ class SerivceProvider(Resource):
             {"$set":update_body}
         )
 
-        return res,200
+        a = getJsonProfile(service_provider_collection.find_one({'_id':ObjectId(update_body['activity_provider_id'])}))
+
+        return a,200
 
 
 class LoginProvider(Resource):
