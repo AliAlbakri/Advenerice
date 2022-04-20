@@ -566,21 +566,31 @@ class filterA(Resource):
                     filtered_activity = activity_collection.find({})
 
 
-
-
-
-
-
             filtered_activity = getJsonProfile(list(filtered_activity))
 
             return filtered_activity,200
 
 
 
+class topRatedActivity(Resource):
+
+    def get(self):
+        pointers_activity = activity_collection.find({"activity_provider_id":request.args.get('activity_provider_id')})
+        best_rating_activity = None
+        for x in range(len(pointers_activity)):
+            print(pointers_activity[x])
 
 
 
 
+
+
+
+
+
+
+
+api.add_resource(topRatedActivity, '/a')
 
 api.add_resource(filterA, '/filter_activity')
 
@@ -643,6 +653,8 @@ def getActivityRating(activity_id):
         average_ratings = total_ratings / len(comments)
 
         return float("{:.1f}".format(average_ratings))
+
+
 
 
 if __name__ == "__main__":
