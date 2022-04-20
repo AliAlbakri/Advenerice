@@ -575,10 +575,12 @@ class filterA(Resource):
 class topRatedActivity(Resource):
 
     def get(self):
-        pointers_activity = activity_collection.find({"activity_provider_id":request.args.get('activity_provider_id')})
+        activity_list = activity_collection.find({"activity_provider_id":request.args.get('activity_provider_id')})
         best_rating_activity = None
-        for x in range(len(pointers_activity)):
-            print(pointers_activity[x])
+        activity_list = list(activity_list)
+
+        for x in range(activity_list):
+            print(activity_list[x])
 
 
 
