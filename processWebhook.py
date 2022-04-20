@@ -575,12 +575,12 @@ class filterA(Resource):
 class topRatedActivity(Resource):
 
     def get(self):
-        activity_list = activity_collection.find({"activity_provider_id":request.args.get('activity_provider_id')})
-        best_rating_activity = None
-        activity_list = list(activity_list)
 
-        for x in range(activity_list):
-            print(activity_list[x])
+
+        highest_rated =  activity_collection.find().sort({"rating": +1}).limit(1)
+
+        return getActivityRating(highest_rated),200
+
 
 
 
