@@ -662,4 +662,4 @@ def getActivityRating(activity_id):
 if __name__ == "__main__":
     app.run(debug=True)
 
-# https://backend-advenerice.herokuapp.com/
+# https://backend-advenerice.herokuapp.com///
